@@ -1,0 +1,15 @@
+#!/bin/sh
+# ---
+# PLSPUTMEAT: /usr/bin/rofi-cp
+# PLSOWNME: root
+# PLSGRPME: root
+# PLSMODME: 555
+# ---
+
+if [ "$#" -eq 0 ];
+then
+	find "$HOME/CP" -type f -name "*.cpp";
+	exit 0;
+fi
+
+coproc ( kitty vim "$@" )

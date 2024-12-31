@@ -1,0 +1,70 @@
+# ---
+# PLSPUTMEAT: $HOME/.config/dunst/dunstrc
+# PLSOWNME: chad
+# PLSGRPME: chad
+# PLSMODME: 444
+# ---
+
+[global]
+monitor = 0
+width = (200, 300)
+height = (50, 250)
+frame_width = 4
+
+origin = top-right
+offset = (10, 10)
+scale = 0
+notification_limit = 5
+indicate_hidden = yes
+
+font = Hack Nerd Font Mono 12
+line_height = 0
+markup = full
+
+format = "<b>%a</b>\n%s\n%b"
+show_age_threshold = -1
+
+vertical_alignment = center
+alignment = left
+
+corner_radius = 10
+gap_size = 10
+
+hide_duplicate_count = false
+stack_duplicates = true
+show_indicators = yes
+
+progress_bar_corner_radius = 4
+progress_bar_frame_width = 4
+progress_bar_height = 20
+progress_bar = true
+
+
+mouse_right_click = do_action,close_current
+mouse_left_click = close_current
+
+
+[urgency_low]
+	frame_color = "#888888"
+	background = "#2b2c2e"
+	foreground = "#888888"
+	highlight = "#888888"
+	timeout = 20
+
+
+[urgency_normal]
+	frame_color = "#789a69"
+	background = "#2b2c2e"
+	foreground = "#d2d8d9"
+	highlight = "#789a69"
+	timeout = 20
+	override_pause_level = 30
+
+
+[urgency_critical]
+	frame_color = "#b23a51"
+	background = "#2b2c2e"
+	foreground = "#789a69"
+	highlight = "#b23a51"
+	timeout = 60
+

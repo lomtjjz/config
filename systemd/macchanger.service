@@ -1,0 +1,27 @@
+# ---
+# PLSPUTMEAT: /etc/systemd/system/macchanger.service
+# PLSOWNME: root
+# PLSGRPME: root
+# PLSMODME: 444
+# PLSRUNPOST: sudo sh -c "systemctl daemon-reload && systemctl enable macchanger.service"
+# ---
+[Unit]
+Description=macchanger -A wlan0
+DefaultDependencies=no
+
+Wants=network-online.target
+After=network-online.target
+
+Conflicts=shutdown.target
+Before=shutdown.target
+
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/ifconfig wlan0 down
+ExecStart=/usr/bin/macchanger -A wlan0
+ExecStartPost=/usr/bin/ifconfig wlan0 up
+
+[Install]
+WantedBy=multi-user.target
+

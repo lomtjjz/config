@@ -1,0 +1,68 @@
+// ---
+// PLSPUTMEAT: $HOME/.config/rofi/config.rasi
+// PLSOWNME: chad
+// PLSGRPME: chad
+// PLSMODME: 444
+// ---
+* {
+	font: "Hack Nerd Font Mono 16";
+	cycle: false;
+
+	foreground: #d2d8d9;
+	background: #2b2c2e;
+	green: #789a69;
+	
+	selected-normal-foreground: #789a69;
+	border-color: #d2d8d9;
+
+	background-color: #2b2c2e;
+	text-color: #d2d8d9;
+
+	alternate-normal-background: #2b2c2e;
+	alternate-urgent-background: #2b2c2e;
+	selected-normal-background: #2b2c2e;
+
+	spacing: 0.5em;
+}
+
+#window {
+	padding: 0.5em;
+	border: 4;
+	border-radius: 10;
+	lines: 10;
+}
+
+#mainbox {
+	padding: 0;
+	border: 0;
+}
+
+#listview {
+	padding: 0.25em 0 0 0;
+	spacing: 0.165em;
+	fixed-height: 0;
+	scrollbar: true;
+	border: 0;
+	lines: 6;
+}
+
+#scrollbar {
+	handle-color: #d2d9d9;
+	handle-width: 0.5em;
+}
+
+#inputbar {
+	children: [ "prompt", "textbox-prompt-colon", "entry", "case-indicator" ];
+}
+
+#textbox-prompt-colon {
+	text-color: #d2d8d9;
+	margin: 0 0.25em 0 0;
+	expand: false;
+	str: ":";
+}
+
+#element-text selected {
+	text-color: #789a69;
+}
+

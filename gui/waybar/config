@@ -1,0 +1,82 @@
+// ---
+// PLSPUTMEAT: $HOME/.config/waybar/config
+// PLSOWNME: chad
+// PLSGRPME: chad
+// PLSMODME: 444
+// ---
+{
+	"layer": "top",
+	"position": "top",
+
+	"height": 32,
+	"spacing": 10,
+
+	"modules-left": [ "hyprland/workspaces" ],
+	"modules-center": [ "clock" ],
+	"modules-right": [ "tray", "mpd", "pulseaudio", "network" ],
+
+	"hyprland/workspaces": {
+		"on-click": "close",
+	},
+
+	"clock": {
+		"format": "{:%H:%M %d/%m/%y}",
+	},
+
+	"mpd": {
+		"format": "[ {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S})]",
+		"format-stopped": "[ MPD STOPPED ]",
+		"format-disconnected": "",
+		"interval": 10,
+		"max-length": 48,
+	},
+
+	"pulseaudio": {
+		"format": "[ {volume}% ]",
+		"format-muted": "[ MUTED ]",
+	},
+
+	"network": {
+		"format-wifi": "[ WLAN {ipaddr} ]",
+		"format-ethernet": "[ ETH {ipaddr} ]",
+		"format-disconnected": "[ NO CONN ]",
+	},
+}
+{
+	"layer": "top",
+	"position": "top",
+
+	"height": 32,
+	"spacing": 10,
+
+	"modules-left": [ "hyprland/workspaces" ],
+	"modules-center": [ "clock" ],
+	"modules-right": [ "tray", "mpd", "pulseaudio", "network" ],
+
+	"hyprland/workspaces": {
+		"on-click": "close",
+	},
+
+	"clock": {
+		"format": "{:%H:%M %d/%m/%y}",
+	},
+
+	"mpd": {
+		"format": "[ {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S})]",
+		"format-stopped": "[ MPD STOPPED ]",
+		"format-disconnected": "",
+		"interval": 10,
+		"max-length": 48,
+	},
+
+	"pulseaudio": {
+		"format": "[ {volume}% ]",
+		"format-muted": "[ MUTED ]",
+	},
+
+	"network": {
+		"format-wifi": "[ WLAN {ipaddr} ]",
+		"format-ethernet": "[ ETH {ipaddr} ]",
+		"format-disconnected": "[ NO CONN ]",
+	},
+}

@@ -1,0 +1,40 @@
+/*
+   PLSPUTMEAT: $HOME/.config/waybar/style.css
+   PLSOWNME: chad
+   PLSGRPME: chad
+   PLSMODME: 444
+*/
+
+
+* {
+	border: none;
+	border-radius: 0;
+
+	font-family: "Hack", monospace;
+	font-size: 14px;
+}
+
+
+window#waybar {
+	background: #2b2c2e;
+	color: #d2d8d9;
+}
+
+#workspaces button {
+	background: #2b2c2e;
+	color: #d2d8d9;
+}
+
+#workspaces button.urgent {
+	color: #b23a51;
+}
+
+#workspaces button:hover {
+	box-shadow: none;
+	color: #b23a51;
+}
+
+#workspaces button.active {
+	font-weight: bold;
+	color: #789a69;
+}

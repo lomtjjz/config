@@ -1,0 +1,28 @@
+# PLSIGNOREME
+
+# ---
+# Official packages
+networkmanager
+ly
+
+hyprpaper
+hyprland
+hyprlock
+waybar
+
+rofi-wayland
+kitty
+
+fastfetch
+tmux
+vim
+nnn
+
+# ---
+# Aur packages
+
+librewolf-bin
+vimpc-git
+mpd
+yay
+
