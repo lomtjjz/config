@@ -8,34 +8,26 @@
 
 
 echoerr() { echo "$@" 1>&2; }
-#proceed() {
-#	ans=
-#	tries=5
-#	until [ "$ans" ] || [ "$tries" -eq "0" ];
-#	do
-#		printf "%s (y/n)? " "$@"
-#		read -r ans || echo " "
-#		ans=$(echo "$ans" | tr '[:upper:]' '[:lower:]')
-#		if [ ! "$ans" = "y" ] && [ ! "$ans" = "n" ];
-#		then
-#			printf "\033[A\033[K"
-#			ans=
-#		fi
-#		tries=$((tries - 1))
-#	done
-#	[ "$ans" = "y" ] && return 0
-#	[ "$ans" = "n" ] && return 1
-#}
-
 get_anything() {
 	something=$(grep "$1: " "$2" | sed 1q)
 	echo "${something#*"$1": }"
 }
+
+get_ignore()	{ get_anything "PLSIGNOREME"	"$1"; }
 get_location()	{ get_anything "PLSPUTMEAT"	"$1"; }
 get_owner()	{ get_anything "PLSOWNME"	"$1"; }
 get_group()	{ get_anything "PLSGRPME"	"$1"; }
 get_mod()	{ get_anything "PLSMODME"	"$1"; }
 get_post()	{ get_anything "PLSRUNPOST"	"$1"; }
+
+
+ignore() {
+	if [ ! -f "$1" ] || [ ! -r "$1" ]; then return 1; fi
+	
+	ret=$(get_ignore "$1")
+	[ "$ret" = "true" ] && return 0
+	return 1
+}
 
 move() {
 	if [ ! -f "$1" ] || [ ! -r "$1" ];
@@ -100,7 +92,8 @@ run() {
 
 for file in "$@";
 do
-	grep -q "PLSIGNOREME" "$file" && continue
+	ignore "$file" && continue
+
 	echo "Copying '$file'..."
 	target=$(move "$file")
 	[ "$target" ] && { 
