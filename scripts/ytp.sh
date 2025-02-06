@@ -11,10 +11,8 @@ echoerr() { echo "$@" 1>&2; }
 
 putarr() {
 	oldIFS=$IFS
-	IFS='
-'
 	i=0
-	for opt in $1;
+	echo "$1" | while IFS= read -r opt;
 	do
 		if [ "$2" -eq "$i" ];
 		then
@@ -59,42 +57,45 @@ choose() {
 	done
 }
 
+channels() {
+	out=$(awk -F '\3' '{ print $3 }' "$TARGET/.meta" | sort -u)
 
-TARGET="$HOME/Videos/"
+	while true;
+	do
+		choose "$out" || break
+		"$0" "$sel"
+	done
+}
 
-menu="C"
-while true;
-do
-	case "$menu" in
-	C)
-		channels=$(for file in $TARGET/*;
-		do
-			channel="${file#*[}"
-			channel="${channel%%]*}"
-			echo "$channel"
-		done | sort -u)
+vids() {
+	out=$(cat "$TARGET/.meta" | \
+	while read -r line;
+	do
+		ch=$(echo "$line" | awk -F '\3' '{ print $3 }')
+		[ "$ch" != "$1" ] && continue
+		echo "$line" | awk -F '\3' '{ print $2, $4 }'
+	done | sort -r | awk '{ 
+                cmd ="date \"+%d/%m/%Y\" -d \"@"$1"\"";
+                cmd | getline time;
+		$1="";
+                printf "\033[30m%s\033[0m\t%s\n", time, $0;
+                close(cmd);
+        }')
 
-		choose "$channels" || exit 0
-		channel=$sel
-		menu="V"
-		;;
-	V)
-		vids=$(for file in $TARGET/*;
-		do
-			echo "$file" | grep -q "\[$channel\]" || continue
-			[ "$file" = "${file%.tag}" ] || continue
+	while true;
+	do
+		choose "$out" || break
 
-			vid="${file#*[}"
-			vid="${file#*] }"
-			echo "$vid"
-		done | sort -u)
+		name=$(echo "$sel" | awk '{ $1=""; print $0 }' | sed 's/^ //g')
+		id=$(grep "$name" "$TARGET/.meta" | awk -F '\3' '{ print $1 }')
+		mpv "$TARGET/$id."*
+	done
+}
 
-		choose "$vids" || {
-			menu="C"
-			continue
-		}
-		mpv "$TARGET/[$channel] $sel"
-		;;
-	esac
-done
 
+TARGET="$HOME/Videos"
+
+if [ -z "$1" ];
+then channels
+else vids "$1"
+fi

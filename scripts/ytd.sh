@@ -9,7 +9,6 @@
 CONFIG="$HOME/.config/ytd.conf"
 
 OUTDIR="$HOME/Videos"
-OUTTEMPLATE="[%(channel)s] %(title)s.%(ext)s"
 SLEEP=$(( 4 * 60 * 60 ))
 
 URL=
@@ -18,48 +17,31 @@ FLAGS=
 DELETEAFTER=
 
 
+# Meta format
+# ID\0CHANNEL_NAME\0VIDEO_TITLE\0POSTED_AT\0REMOVED_AT\0\n
+
 echoerr() { echo "$@" 1>&2; }
 
-# ---
-#
-reg_new() {
-
-	now=$(date +%s)
-	for file in "$OUTDIR"/*;
-	do
-		[ -z "${file##*.tag}" ] && continue
-		[ -f "${file}.tag" ] && continue
-		
-		if [ -z "$DELETEAFTER" ];
-		then
-			echo "6969696969" > "${file}.tag"
-		else
-			echo "$((now + DELETEAFTER))" > "${file}.tag"
-		fi
-
-		channel="${file%%]*}"
-		channel="${channel#*[}"
-		notify-send -a "ytd" "$(basename "$file")"
-	done
+get_meta()
+{
+	yt-dlp	"$1" \
+		-I"$2" \
+		--no-cache-dir \
+		--print id,timestamp,channel,title
+}
+download()
+{
+	#shellcheck disable=SC2086
+	yt-dlp  "$1" \
+		-I"$2" \
+		--quiet \
+		--no-cache-dir \
+		--paths="$OUTDIR" \
+		--output="%(id)s.%(ext)s" \
+		$FLAGS
 }
 
-reg_clean() {
-	echo "Cleaning $OUTDIR..."
-	now=$(date +%s)
-	for file in "$OUTDIR"/*.tag;
-	do
-		[ "$(cat "$file")" -le "$now" ] && {
-			rm "$file" "${file%.tag}"
-			touch "${file%.tag}"		# Create empty file, so it won't be downloaded again by yt-dlp
-			echo "6969696969" > $file	# Will fail on Wed Nov 10 07:56:09 PM CET 2190
-		}
-	done
-}
-#
-# ---
 
-# ---
-#
 update() {
 	[ "$URL" ] || {
 		echoerr "err: no url provided"
@@ -68,18 +50,32 @@ update() {
 	[ "$LIMIT" ] || {
 		echoerr "warn: no limit provided"
 	}
+
+	echo "Downloading from '$URL' (limit $LIMIT)"
+	i=1
+	while [ "$i" -le "$LIMIT" ];
+	do
+		META=$(get_meta "$URL" "$i")
+
+		id=$(echo "$META"	| sed -n '1p')
+		timestamp=$(echo "$META"| sed -n '2p')
+		channel=$(echo "$META"	| sed -n '3p')
+		title=$(echo "$META"	| sed -n '4p')
 	
-	echo "Downloading from <$URL>..."
-	# shellcheck disable=SC2086
-	yt-dlp \
-		--quiet \
-		--no-cache-dir \
-		--paths="$OUTDIR" \
-		--output="$OUTTEMPLATE" \
-		--playlist-end="$LIMIT" \
-		$FLAGS \
-		"$URL"
-	reg_new
+		grep -q "$id" "$OUTDIR/.meta" && break
+		download "$URL" "$i" || break
+		
+		printf  "%s\3%s\3%s\3%s\3%s\3\n" \
+			"$id" \
+			"$timestamp" \
+			"$channel" \
+			"$title" \
+			"$((timestamp + DELETEAFTER))" \
+			>> "$OUTDIR/.meta"
+
+		dunstify -a "ytp" "$channel" "$title"
+		i=$((i + 1))
+	done
 }
 
 parse_config() {
@@ -111,27 +107,11 @@ parse_config() {
 		esac
 	done < "$CONFIG"
 }
-#
-# ---
 
 
-if [ ! -f "$CONFIG" ] || [ ! -r "$CONFIG" ];
-then
-	echoerr "bad \$CONFIG provided"
-	exit 1
-fi
+[ -d "$OUTDIR" ] || mkdir "$OUTDIR" || exit 1
+[ -f "$OUTDIR/.meta" ] || touch "$OUTDIR/.meta" || exit 1
 
-if [ ! -d "$OUTDIR" ];
-then
-	echoerr "bad \$OUTDIR provided"
-	exit 1
-fi
-
-if [ ! -r "$OUTDIR" ] || [ ! -w "$OUTDIR" ];
-then
-	echoerr "insufficient permissions for \$OUTDIR"
-	exit 1
-fi
 
 while true;
 do
