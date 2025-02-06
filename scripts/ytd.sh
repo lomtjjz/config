@@ -1,4 +1,5 @@
 #!/bin/sh
+# Not a daemon really. Trigerred by a systemd timer once in a while
 # ---
 # PLSPUTMEAT: /usr/bin/ytd
 # PLSOWNME: root
@@ -9,7 +10,6 @@
 CONFIG="$HOME/.config/ytd.conf"
 
 OUTDIR="$HOME/Videos"
-SLEEP=$(( 4 * 60 * 60 ))
 
 URL=
 LIMIT=
@@ -78,44 +78,57 @@ update() {
 	done
 }
 
-parse_config() {
-	while IFS="" read -r LINE || [ -n "$LINE" ];
-	do
-		OPT="${LINE%%=*}"
-		ARG="${LINE#*=}"
-
-		case "$OPT" in
-		"URL")
-			URL=$ARG
-			;;
-		"LIMIT")
-			LIMIT=$ARG
-			;;
-		"FLAGS")
-			FLAGS=$ARG
-			;;
-		"DELETEAFTER")
-			DELETEAFTER=$ARG
-			;;
-		"END")
-			update
-			URL=
-			LIMIT=
-			FLAGS=
-			DELETEAFTER=
-			;;
-		esac
-	done < "$CONFIG"
-}
-
-
 [ -d "$OUTDIR" ] || mkdir "$OUTDIR" || exit 1
 [ -f "$OUTDIR/.meta" ] || touch "$OUTDIR/.meta" || exit 1
 
-
-while true;
+while IFS="" read -r LINE || [ -n "$LINE" ];
 do
-	parse_config
-	sleep "$SLEEP"
-done
+	OPT="${LINE%%=*}"
+	ARG="${LINE#*=}"
 
+	case "$OPT" in
+	"URL")
+		URL=$ARG
+		;;
+	"LIMIT")
+		LIMIT=$ARG
+		;;
+	"FLAGS")
+		FLAGS=$ARG
+		;;
+	"DELETEAFTER")
+		DELETEAFTER=$ARG
+		;;
+	"END")
+		update
+		URL=
+		LIMIT=
+		FLAGS=
+		DELETEAFTER=
+		;;
+	esac
+done < "$CONFIG"
+
+
+now=$(date "+%s")
+cp "$OUTDIR/.meta" "$OUTDIR/.meta2"
+while read -r line;
+do
+	id=$(echo "$line" | awk -F '\3' '{ print $1 }')
+	due=$(echo "$line" | awk -F '\3' '{ print $5 }')
+
+	[ "$due" -eq "0" ] && continue
+	[ "$due" -lt "$now" ] && continue
+
+	sed -i "/^$id.*$/d" "$OUTDIR/.meta"
+	printf "%s\0%s\0%s\0%s\0%s\0\n" \
+		"$id" \
+		"0" \
+		"[DELETED]" \
+		"[DELETED]" \
+		"0" \
+		>> "$OUTDIR/.meta"
+
+	rm -f "$OUTDIR/$id."*
+done < "$OUTDIR/.meta2"
+rm "$OUTDIR/.meta2"

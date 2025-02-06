@@ -58,7 +58,12 @@ choose() {
 }
 
 channels() {
-	out=$(awk -F '\3' '{ print $3 }' "$TARGET/.meta" | sort -u)
+	out=$(awk -F '\3' '{ if ($5!=0) {print $3} }' "$TARGET/.meta" | sed "/^$/d" | sort -u)
+
+	[ -z "$out" ] && {
+		echo "No videos found..."
+		exit 1
+	}
 
 	while true;
 	do
@@ -68,19 +73,19 @@ channels() {
 }
 
 vids() {
-	out=$(cat "$TARGET/.meta" | \
-	while read -r line;
-	do
-		ch=$(echo "$line" | awk -F '\3' '{ print $3 }')
-		[ "$ch" != "$1" ] && continue
-		echo "$line" | awk -F '\3' '{ print $2, $4 }'
-	done | sort -r | awk '{ 
+	out=$(awk -F '\3' -v var="$1" '{ if ($5!=0 && $3==var) {print $2, $4} }' "$TARGET/.meta" | sed "/^$/d" | \
+	sort -r | awk '{
                 cmd ="date \"+%d/%m/%Y\" -d \"@"$1"\"";
                 cmd | getline time;
 		$1="";
                 printf "\033[30m%s\033[0m\t%s\n", time, $0;
                 close(cmd);
         }')
+
+	[ -z "$out" ] && {
+		echo "No videos found..."
+		exit 1
+	}
 
 	while true;
 	do
