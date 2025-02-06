@@ -13,6 +13,8 @@ call plug#end()
 
 let g:vimwiki_global_ext = 1
 
+inoremap <kPagedown> ~
+set ttimeoutlen=100
 set nocompatible
 filetype plugin on
 
