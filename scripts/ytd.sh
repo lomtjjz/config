@@ -116,7 +116,6 @@ parse_config() {
 while true;
 do
 	parse_config
-	reg_clean
 	sleep "$SLEEP"
 done
 
