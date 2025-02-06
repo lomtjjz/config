@@ -1,0 +1,33 @@
+" ---
+" PLSPUTMEAT: $HOME/.config/vimpc/vimpcrc
+" PLSOWNME: chad
+" PLSGRPME: chad
+" PLSMODME: 444
+" ---
+
+set singlequit
+set autoscroll
+set progressbar!
+set sortalbumdate
+set sortignorethe
+set sortignorecase
+set window playlist
+set windows playlist,library
+
+hi song default default
+hi id default default
+hi dir default default
+hi current default green
+hi tab default default
+hi progress default default
+hi match default green
+hi partial default default
+hi full default default
+hi pager default default
+hi status default default
+hi error default red
+
+map q ZZ
+map <C-h> gT
+map <C-l> gt
+
