@@ -62,7 +62,7 @@ update() {
 		channel=$(echo "$META"	| sed -n '3p')
 		title=$(echo "$META"	| sed -n '4p')
 	
-		grep -q "$id" "$OUTDIR/.meta" && break
+		grep -a -q "$id" "$OUTDIR/.meta" && break
 		download "$URL" "$i" || break
 		
 		printf  "%s\3%s\3%s\3%s\3%s\3\n" \
@@ -73,7 +73,7 @@ update() {
 			"$((timestamp + DELETEAFTER))" \
 			>> "$OUTDIR/.meta"
 
-		dunstify -a "ytp" "$channel" "$title"
+		dunstify -t 5000 -a "ytp" "$channel" "$title"
 		i=$((i + 1))
 	done
 }
@@ -118,7 +118,7 @@ do
 	due=$(echo "$line" | awk -F '\3' '{ print $5 }')
 
 	[ "$due" -eq "0" ] && continue
-	[ "$due" -lt "$now" ] && continue
+	[ "$due" -ge "$now" ] && continue
 
 	sed -i "/^$id.*$/d" "$OUTDIR/.meta"
 	printf "%s\0%s\0%s\0%s\0%s\0\n" \

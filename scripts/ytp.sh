@@ -92,7 +92,7 @@ vids() {
 		choose "$out" || break
 
 		name=$(echo "$sel" | awk '{ $1=""; print $0 }' | sed 's/^ //g')
-		id=$(grep "$name" "$TARGET/.meta" | awk -F '\3' '{ print $1 }')
+		id=$(grep -a "$name" "$TARGET/.meta" | awk -F '\3' '{ print $1 }')
 		mpv "$TARGET/$id."*
 	done
 }
