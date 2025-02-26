@@ -6,7 +6,7 @@
 # PLSMODME: 555
 # ---
 
-wait_time=$(( 7 * 24 * 3600 ))
+wait_time=$(( 3 * 24 * 3600 ))
 while true
 do
 	last=$(date -r /var/log/pacman.log "+%s")

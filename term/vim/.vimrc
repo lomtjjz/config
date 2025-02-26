@@ -7,6 +7,7 @@
 call plug#begin()
 
 Plug 'vimwiki/vimwiki'
+Plug 'junegunn/fzf.vim'
 Plug 'bfrg/vim-c-cpp-modern'
 
 call plug#end()
@@ -14,6 +15,7 @@ call plug#end()
 let g:vimwiki_global_ext = 1
 
 inoremap <kPagedown> ~
+inoremap <C-S- > <Nop>
 set ttimeoutlen=100
 set nocompatible
 filetype plugin on
@@ -26,11 +28,15 @@ syntax on
 colorscheme chalk
 
 
+" ---
+" Bad keys!
 nmap <Up>	<Nop>
 nmap <Down>	<Nop>
 nmap <Left>	<Nop>
 nmap <Right>	<Nop>
-
+nmap <PageUp>	<Nop>
+nmap <PageDown> <Nop>
+" ---
 
 function Execute()
 	let l:CFLAGS=" -O3 -Wall -Wextra -Werror "
@@ -63,3 +69,5 @@ endfunction
 
 nmap <c-k> :call Execute()<Return>
 nmap <c-j> :call Debug()<Return>
+
+nmap <c-q> :Files<Return>

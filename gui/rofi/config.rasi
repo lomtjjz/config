@@ -54,6 +54,9 @@
 #inputbar {
 	children: [ "prompt", "textbox-prompt-colon", "entry", "case-indicator" ];
 }
+#message {
+	border: 0;
+}
 
 #textbox-prompt-colon {
 	text-color: #d2d8d9;
